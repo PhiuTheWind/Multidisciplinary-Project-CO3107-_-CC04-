@@ -126,10 +126,10 @@ function StudentSummary() {
             <div className={styles.info}>
                 <img src={ava} className={styles.ava} alt="Avatar" />
                 <p className={styles.name}>{studentInfo.name}</p>
-                <p className={styles.paper}>Số trang: {studentInfo.pagebalance}</p>
-                <button className={styles.buy_paper} onClick={handleOpenModal}>Mua thêm giấy</button>
+                <p className={styles.paper}>Số tiền hiện tại: {studentInfo.pagebalance}</p>
+                <button className={styles.buy_paper} onClick={handleOpenModal}>Nạp thêm tiền </button>
             </div>
-            <div className={styles.paper_size}>
+            {/* <div className={styles.paper_size}>
                 <div className={styles.paper_size_title}>
                     <p>Khổ giấy</p>
                     <div className={styles.size_input_group}>
@@ -200,8 +200,8 @@ function StudentSummary() {
                         },
                     }}
                 />
-            </div>
-            <div className={styles.file_type}>
+            </div> */}
+            {/* <div className={styles.file_type}>
                 <div className={styles.file_type_title}>
                     Định dạng file
                     <div className={styles.file_date_search}>
@@ -290,8 +290,8 @@ function StudentSummary() {
                         },
                     }}
                 />
-            </div>
-            <div className={styles.print_freq}>
+            </div> */}
+            {/* <div className={styles.print_freq}>
                 <div className={styles.print_freq_title}>
                     <div className={styles.print_freq_input}>
                         <label className={styles.print_freq_input_lable}>Tần suất in trong năm: </label>
@@ -371,7 +371,7 @@ function StudentSummary() {
                         }}
                     />
                 </div>
-            </div>
+            </div> */}
             
             {isModalOpen && (
                 <PurchasePaperModal onClose={handleCloseModal} name={studentInfo.name}/>

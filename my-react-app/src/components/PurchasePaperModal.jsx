@@ -41,10 +41,10 @@ function PurchasePaperModal({ onClose, name }) {
                 </div>
                 <div className={styles.payment_section}>
                     <div className={styles.price_info}>
-                        <p className={styles.price}>500.000 <span>VNĐ</span></p>
+                        <p className={styles.price}>Tối thiểu 50.000 <span>VNĐ</span></p>
                         <p className={styles.name}>{name.toUpperCase()}</p>
                         <div className={styles.input_section}>
-                            <label className={styles.label} htmlFor="paper_count">Số giấy mua thêm</label>
+                            <label className={styles.label} htmlFor="paper_count">Số tiền cần nạp </label>
                             <input className={styles.input}
                                 type="number"
                                 id="paper_count"

@@ -99,17 +99,17 @@ function StudentViewLog() {
                 Cell: ({ value }) => <div style={{ width: '80px' }}>{value}</div>, // Align text left
             },
             {
-                Header: 'TÊN FILE',
+                Header: 'Biển số xe',
                 accessor: 'file_name',
                 Cell: ({ value }) => <div style={{ textAlign: 'left' }}>{value}</div>, // Align text left
             },
             {
-                Header: 'BẮT ĐẦU IN',
+                Header: 'Thời gian vào',
                 accessor: 'start_date',
                 Cell: ({ value }) => formatDate(value),
             },
             {
-                Header: 'KẾT THÚC IN',
+                Header: 'Thời gian ra',
                 accessor: 'end_date',
                 Cell: ({ value }) => formatDate(value),
             },

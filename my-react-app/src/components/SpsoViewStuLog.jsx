@@ -72,17 +72,17 @@ function SpsoViewStuLog() {
                 Cell: ({ value }) => <div style={{ width: '80px' }}>{value}</div>,
             },
             {
-                Header: 'ID MÁY IN',
+                Header: 'BIỂN SỐ XE',
                 accessor: 'printer_id',
                 Cell: ({ value }) => <div style={{ width: '100px' }}>{value}</div>,
             },
             {
-                Header: 'TÊN FILE',
+                Header: 'TÊN HỌC SINH',
                 accessor: 'file_name',
                 Cell: ({ value }) => <div style={{ textAlign: 'left' }}>{value}</div>, // Align text left
             },
             {
-                Header: 'NGÀY IN',
+                Header: 'NGÀY GỬI XE',
                 accessor: 'start_date',
                 Cell: ({ value }) => formatDate(value),
             },
@@ -233,15 +233,15 @@ function SpsoViewStuLog() {
                                 <span className={styles.value}>{selectedrow?.printer_id}</span>
                             </div>
                             <div className={styles.row}>
-                                <label className={styles.field}>Ngày bắt đầu in:</label>
+                                <label className={styles.field}>Thời gian vào bãi:</label>
                                 <span className={styles.value}>{formatDate(selectedrow?.start_date)}</span>
                             </div>
                             <div className={styles.row}>
-                                <label className={styles.field}>Ngày kết thúc in:</label>
+                                <label className={styles.field}>Thời gian ra bãi:</label>
                                 <span className={styles.value}>{formatDate(selectedrow?.end_date)}</span>
                             </div>
                             <div className={styles.row}>
-                                <label className={styles.field}>Ngày nhận:</label>
+                                <label className={styles.field}>Ngày gửi xe :</label>
                                 <span className={styles.value}>{formatDate(selectedrow?.received_date)}</span>
                             </div>
                             <div className={styles.row}>
