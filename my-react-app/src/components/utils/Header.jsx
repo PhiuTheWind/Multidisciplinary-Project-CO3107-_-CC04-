@@ -42,7 +42,7 @@ function Header({ text, paper, showLogout, isStudent }) {
                         <button className={styles.button} onClick={() => navigate('/spso_homepage')}>HOME</button>
                         <button className={styles.button} onClick={() => navigate('/spso_homepage/manage_printer')}>MÁY IN</button>
                         <button className={styles.button} onClick={() => navigate('/spso_homepage/manage_cofig')}>CẤU HÌNH</button>
-                        <button className={styles.button} onClick={() => navigate('/spso_homepage/view_stu_log')}>THÔNG TIN IN SINH VIÊN</button>
+                        <button className={styles.button} onClick={() => navigate('/spso_homepage/view_stu_log')}>THÔNG TIN GỬI XE SINH VIÊN</button>
                         <button className={styles.button} onClick={() => navigate('/spso_homepage/spso_report_month')}>BÁO CÁO</button>
                     </div>
                 </div>

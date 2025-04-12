@@ -14,10 +14,10 @@ function SpsoViewStuLog() {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [start_date, setStartDate] = useState(null)
-    const [end_date, setEndDate] = useState(null)
+    const [start_time, setStartTime] = useState(null)
+    const [end_time, setEndTime] = useState(null)
     const [stuid, setStuID] = useState("")
-    const [printerid, setPrinterID] = useState("")
+    const [status, setStatus] = useState("")
     const [selectedrow, setSelectedRow] = useState(null)
     const [isView, setIsViewOpen] = useState(false)
     const [data, setData] = useState([]);
@@ -26,9 +26,19 @@ function SpsoViewStuLog() {
     const formatDate = (dateString) => {
         if (!dateString) return '';
         return new Intl.DateTimeFormat('en-GB', {
+
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false // dùng giờ 24h, nếu bạn muốn 12h thì đặt là true
+        }).format(new Date(dateString));
+    };
+
+    const formatDateOnly = (dateString) => {
+        if (!dateString) return '';
+        return new Intl.DateTimeFormat('en-GB', {
             day: '2-digit',
             month: '2-digit',
-            year: 'numeric',
+            year: 'numeric'
         }).format(new Date(dateString));
     };
 
@@ -36,6 +46,7 @@ function SpsoViewStuLog() {
         try {
             const response = await axios.get('http://localhost:3000/api/history');
             if (response.data.success) {
+                console.log("Fetched data:", response.data.data); // In ra dữ liệu
                 setData(response.data.data);
             } else {
                 throw new Error(response.data.message);
@@ -53,16 +64,16 @@ function SpsoViewStuLog() {
 
     useEffect(() => {
         const filtered = data.filter((row) => {
-            const startDateFilter = start_date ? new Date(row.start_date) >= new Date(start_date) : true;
-            const endDateFilter = end_date ? new Date(row.start_date) <= new Date(end_date) : true;
+            const startTimeFilter = start_time ? new Date(row.start_time) >= new Date(start_time) : true;
+            const endTimeFilter = end_time ? new Date(row.end_time) <= new Date(end_time) : true;
             const stuIdFilter = stuid ? row.stu_id.includes(stuid) : true;
-            const printerIdFilter = printerid ? row.printer_id === Number(printerid) : true;
+            const statusFilter = status ? row.status === status : true;
 
-            return startDateFilter && endDateFilter && stuIdFilter && printerIdFilter;
+            return startTimeFilter && endTimeFilter && stuIdFilter && statusFilter;
         });
 
         setFilteredData(filtered);
-    }, [data, start_date, end_date, stuid, printerid]);
+    }, [data, start_time, end_time, stuid, status]);
 
     const columns = useMemo(
         () => [
@@ -73,22 +84,22 @@ function SpsoViewStuLog() {
             },
             {
                 Header: 'BIỂN SỐ XE',
-                accessor: 'printer_id',
+                accessor: 'bien_so_xe',
                 Cell: ({ value }) => <div style={{ width: '100px' }}>{value}</div>,
             },
             {
                 Header: 'TÊN HỌC SINH',
-                accessor: 'file_name',
+                accessor: 'stu_name',
                 Cell: ({ value }) => <div style={{ textAlign: 'left' }}>{value}</div>, // Align text left
             },
             {
                 Header: 'NGÀY GỬI XE',
-                accessor: 'start_date',
-                Cell: ({ value }) => formatDate(value),
+                accessor: 'parking_date',
+                Cell: ({ value }) => formatDateOnly(value),
             },
             {
                 Header: 'TÌNH TRẠNG',
-                accessor: 'request_status',
+                accessor: 'status',
                 Cell: ({ value }) => (
                     <div
                         className={`${styles.statusBadge} ${value === 'Đã nhận' ? styles.recv : value === 'Chưa nhận' ? styles.unrecv : styles.print}`}
@@ -133,15 +144,15 @@ function SpsoViewStuLog() {
 
     return (
         <div className={styles.container}>
-            <Header text='SPSO NAME' showLogout={true} isStudent={false} />
+            <Header text='ADMIN NAME' showLogout={true} isStudent={false} />
 
             <div className={styles.search}>
                 <div className={styles.input_group}>
                     <label className={styles.search_label}><IoSearch /> Từ</label>
                     <DatePicker
                         className={styles.datepick}
-                        selected={start_date}
-                        onChange={(date) => setStartDate(date)} // Ensure the handler updates state
+                        selected={start_time}
+                        onChange={(date) => setStartTime(date)} // Ensure the handler updates state
                         dateFormat="dd/MM/yyyy"
                     />
                 </div>
@@ -149,8 +160,8 @@ function SpsoViewStuLog() {
                     <label className={styles.search_label}><IoSearch /> Đến</label>
                     <DatePicker
                         className={styles.datepick}
-                        selected={end_date}
-                        onChange={(date) => setEndDate(date)} // Ensure the handler updates state
+                        selected={end_time}
+                        onChange={(date) => setEndTime(date)} // Ensure the handler updates state
                         dateFormat="dd/MM/yyyy"
                     />
                 </div>
@@ -165,14 +176,16 @@ function SpsoViewStuLog() {
                     />
                 </div>
                 <div className={styles.input_id}>
-                    <label className={styles.search_label}><IoSearch /> ID máy in</label>
-                    <input
-                        type='number'
+                    <label className={styles.search_label}><IoSearch /> Trạng thái </label>
+                    <select
                         className={styles.input}
-                        placeholder='Nhập ID máy in'
-                        value={printerid}
-                        onChange={(e) => setPrinterID(e.target.value)}
-                    />
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                    >
+                        <option value="">Tất cả</option>
+                        <option value="IN">IN</option>
+                        <option value="OUT">OUT</option>
+                    </select>
                 </div>
             </div>
             <div className={styles.table_printer}>
@@ -214,7 +227,7 @@ function SpsoViewStuLog() {
             {isView && (
                 <div className={styles.popup}>
                     <div className={styles.popup_info}>
-                        <h2 className={styles.h2}>Thông Tin Yêu Cầu In</h2>
+                        <h2 className={styles.h2}>Thông tin gửi xe</h2>
                         <div className={styles.info}>
                             <div className={styles.row}>
                                 <label className={styles.field}>MSSV:</label>
@@ -225,54 +238,28 @@ function SpsoViewStuLog() {
                                 <span className={styles.value}>{selectedrow?.stu_name}</span>
                             </div>
                             <div className={styles.row}>
-                                <label className={styles.field}>Tên file:</label>
-                                <span className={styles.value}>{selectedrow?.file_name}</span>
-                            </div>
-                            <div className={styles.row}>
-                                <label className={styles.field}>ID máy in:</label>
-                                <span className={styles.value}>{selectedrow?.printer_id}</span>
-                            </div>
-                            <div className={styles.row}>
                                 <label className={styles.field}>Thời gian vào bãi:</label>
-                                <span className={styles.value}>{formatDate(selectedrow?.start_date)}</span>
+                                <span className={styles.value}>{formatDate(selectedrow?.start_time)}</span>
                             </div>
                             <div className={styles.row}>
                                 <label className={styles.field}>Thời gian ra bãi:</label>
-                                <span className={styles.value}>{formatDate(selectedrow?.end_date)}</span>
+                                <span className={styles.value}>{formatDate(selectedrow?.end_time)}</span>
                             </div>
                             <div className={styles.row}>
                                 <label className={styles.field}>Ngày gửi xe :</label>
-                                <span className={styles.value}>{formatDate(selectedrow?.received_date)}</span>
-                            </div>
-                            <div className={styles.row}>
-                                <label className={styles.field}>Nơi nhận:</label>
-                                <span className={styles.value}>{selectedrow?.location}</span>
+                                <span className={styles.value}>{formatDateOnly(selectedrow?.parking_date)}</span>
                             </div>
                             <div className={styles.row}>
                                 <label className={styles.field}>Trạng thái:</label>
-                                <span className={`${styles.value} ${selectedrow?.request_status === 'Đã nhận' ? styles.receive : selectedrow?.request_status === 'Chưa nhận' ? styles.unreceive : styles.printing}`}
+                                <span className={`${styles.value} ${selectedrow?.request_status === 'OUT' ? styles.receive : selectedrow?.request_status === 'IN' ? styles.unreceive : styles.printing}`}
                                 >
-                                    {selectedrow?.request_status}
+                                    {selectedrow?.status}
                                 </span>
                             </div>
                         </div>
                         <div className={styles.info}>
-                            <div className={styles.row}>
-                                <label className={styles.field}>Khổ giấy:</label>
-                                <span className={styles.value}>{selectedrow?.paper_size}</span>
-                            </div>
-                            <div className={styles.row}>
-                                <label className={styles.field}>Trang in:</label>
-                                <span className={styles.value}>{(selectedrow?.selected_pages).toLowerCase() === "all" ? "Tất cả trang" : (selectedrow?.selected_pages).toLowerCase() === "even" ? "Trang chẵn" : (selectedrow?.selected_pages).toLowerCase() === "odd" ? "Trang lẻ" : selectedrow?.selected_pages}</span>
-                            </div>
-                            <div className={styles.row}>
-                                <label className={styles.field}>In một/hai mặt:</label>
-                                <span className={styles.value}>{selectedrow?.side_option === 'one_side' ? "Một mặt" : "Hai mặt"}</span>
-                            </div>
-                            <div className={styles.row}>
-                                <label className={styles.field}>Số bản sao:</label>
-                                <span className={styles.value}>{selectedrow?.num_copies}</span>
-                            </div>
+
+
                         </div>
 
                         <button className={styles.popup_btn} onClick={() => setIsViewOpen(false)}>

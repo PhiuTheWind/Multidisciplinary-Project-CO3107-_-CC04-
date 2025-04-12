@@ -139,28 +139,7 @@ const modify_status = async (req, res) => {
 };
 
 
-const get_printer_list = async (req, res, next) => {
-    try {
-        const result = await getInfo_Printer();
-        const format_printer_ID = result.map(printer => ({
-            ...printer,
-            //printer_id: `PRINTER#${printer.printer_id}`
-            printer_id: printer.printer_id
-        }));
-        //console.log(format_printer_ID)
-        res.status(200).json({
-            success: true,
-            message: "Printer list fetched successfully",
-            data: format_printer_ID
-        });
-    } catch (error) {
-        console.error('Error get printer list:', error);
-        return res.status(501).json({
-            success: false,
-            message: 'Failed to get printer list.',
-        });
-    }
-};
+
 
 
 const get_config = async (req, res) => {
@@ -197,41 +176,30 @@ const patch_config = async (req, res) => {
 };
 
 const get_history = async (req, res) => {
-    const { printer_id } = req.body;
-    //const {printer_id } = query;
-    if (!printer_id) {
-        return res.status(400).json({
-            success: false,
-            message: 'Printer ID is required.',
-        });
-    }
-    
+
     try {
         // SQL query to join 'request' and 'printer' tables
         const query = `
             SELECT 
-                r.file_name,
-                r.request_id,
-                r.paper_size,
-                r.num_copies,
-                r.side_option,
-                r.selected_pages,
-                r.status AS request_status,
+                r.parking_date,
+                r.bien_so_xe,
+                r.status,
+                r.start_time,
+                r.end_time,
+                r.parking_time,
+                r.student_used,
                 r.start_date,
                 r.end_date,
-                r.received_date,
-                r.student_send,
-                p.location,
+                r.MSSV,
+                r.Price,
                 s.stu_id,
                 s.stu_name
             FROM 
-                request r
-            JOIN 
-                printer p ON r.printer_id = p.printer_id
+                History r
             JOIN
-                student s ON r.student_send = s.username
-            WHERE 
-                r.printer_id = ?;
+                Student s ON r.student_used = s.username 
+                and r.MSSV = s.stu_id
+
         `;
 
         // 
@@ -264,32 +232,27 @@ const get_history_all = async (req, res) => {
     try {
         const query = `
             SELECT 
-                r.printer_id,
-                r.file_name,
-                r.request_id,
-                r.paper_size,
-                r.num_copies,
-                r.side_option,
-                r.selected_pages,
-                r.status AS request_status,
-                r.start_date,
-                r.end_date,
-                r.received_date,
-                r.student_send,
-
-                p.location,
+                r.parking_date,
+                r.bien_so_xe,
+                r.status,
+                r.start_time,
+                r.end_time,
+                r.parking_time,
+                r.student_used,
+                r.MSSV,
+                r.Price,
                 s.stu_id,
                 s.stu_name
             FROM 
-                request r
-            JOIN 
-                printer p ON r.printer_id = p.printer_id
-            JOIN 
-                student s ON r.student_send = s.username;
+                History r
+            JOIN
+                Student s ON r.student_used = s.stu_name 
+                and r.MSSV = s.stu_id
+
         `;
 
         const [result] = await database.query(query);
-        
+
         return res.status(200).json({
             success: true,
             message: 'History retrieved successfully.',
@@ -490,7 +453,6 @@ const get_month_statistics = async (req, res) => {
 
 module.exports = {
     add_printer,
-    get_printer_list,
     refill_paper,
     modify_status,
     get_config,

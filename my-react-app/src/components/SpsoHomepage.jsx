@@ -25,7 +25,7 @@ function SpsoHomepage() {
             Quản lý cấu hình hệ thống
           </button>
           <button className={styles.button} onClick={() => navigate('/spso_homepage/view_stu_log')}>
-            Thông tin in của sinh viên
+            Thông tin gửi xe của sinh viên
           </button>
           <button className={styles.button} onClick={() => navigate('/spso_homepage/spso_report_month')}>
             Báo cáo in ấn
