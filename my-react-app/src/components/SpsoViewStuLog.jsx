@@ -258,8 +258,10 @@ function SpsoViewStuLog() {
                             </div>
                         </div>
                         <div className={styles.info}>
-
-
+                            <div className={styles.row}>
+                                <label className={styles.field}>Giá tiền:</label>
+                                <span className={styles.value}>{selectedrow?.Price} VND</span>                        
+                            </div>
                         </div>
 
                         <button className={styles.popup_btn} onClick={() => setIsViewOpen(false)}>

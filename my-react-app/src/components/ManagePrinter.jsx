@@ -7,6 +7,7 @@ import styles from '../styles/ManagePrinter.module.css'
 import { FaNewspaper } from "react-icons/fa6"
 import { IoSearch, IoEyeSharp, IoSettingsSharp } from "react-icons/io5"
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti"
+import axios from 'axios';
 
 function ManagePrinter() {
   const [data, setData] = useState([]); // State to hold the printer data
@@ -20,70 +21,71 @@ function ManagePrinter() {
   const [selectedStatus, setStatus] = useState("")
   const statusOption = ["Bật", "Tắt", "Bảo trì"]
   const navigate = useNavigate()
-
-  const fetchPrinters = async () => {
+  
+  const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/manage_printer');
-      const json = await response.json();
+   
+        const response = await axios.get('http://localhost:3000/api/manage_student_info');
 
-      if (json.success) {
-        setData(json.data); // Populate the table with data
-        setFilteredData(json.data);
-      } else {
-        throw new Error(json.message); // Handle API error
-      }
+        if (response.data.success) {
+            console.log("Fetched data:", response.data.data); // In ra dữ liệu
+            setData(response.data.data);
+        } else {
+            throw new Error(response.data.message);
+        }
     } catch (err) {
-      setError(err.message);
+        setError(err.message || 'An unexpected error occurred.');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   useEffect(() => {
-    // Chi fetch data mot lan khi load (refill khong load de khong bi loi)
-    if (data.length === 0) {
-      fetchPrinters();
-    }
-  }, [data.length]); 
+      fetchData();
+  }, []);
 
   useEffect(() => {
+    const removeAccents = (str) =>
+      str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  
     if (searchTerm) {
-      const filtered = data.filter((printer) =>
-        printer.location.toLowerCase().includes(searchTerm.toLowerCase())
+      const normalizedSearch = removeAccents(searchTerm);
+      const filtered = data.filter((item) =>
+        removeAccents(item.stu_name).includes(normalizedSearch)
       );
       setFilteredData(filtered);
     } else {
-      setFilteredData(data); // Reset to original data if search term is empty
+      setFilteredData(data); // Reset if search term is empty
     }
   }, [searchTerm, data]);
 
 
-  const refillPaper = async (printerId) => {
-    try {
-      const response = await fetch('http://localhost:3000/api/refill_paper', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ printer_id: printerId }),
-      });
+  // const refillPaper = async (printerId) => {
+  //   try {
+  //     const response = await fetch('http://localhost:3000/api/refill_paper', {
+  //       method: 'PATCH',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ printer_id: printerId }),
+  //     });
 
-      const result = await response.json();
+  //     const result = await response.json();
 
-      if (response.ok && result.success) {
-        // Optionally, refresh the data to reflect the updated paper count
-        const updatedData = data.map((printer) =>
-          printer.printer_id === printerId ? { ...printer, num_paper: 500 } : printer
-        );
-        setData(updatedData);
-      } else {
-        alert(result.message || 'Không thể nạp lại giấy');
-      }
-    } catch (error) {
-      console.error('Error refilling paper:', error);
-      alert('Đã xảy ra lỗi khi nạp lại giấy.');
-    }
-  };
+  //     if (response.ok && result.success) {
+  //       // Optionally, refresh the data to reflect the updated paper count
+  //       const updatedData = data.map((printer) =>
+  //         printer.printer_id === printerId ? { ...printer, num_paper: 500 } : printer
+  //       );
+  //       setData(updatedData);
+  //     } else {
+  //       alert(result.message || 'Không thể nạp lại giấy');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error refilling paper:', error);
+  //     alert('Đã xảy ra lỗi khi nạp lại giấy.');
+  //   }
+  // };
 
 
 
@@ -91,63 +93,50 @@ function ManagePrinter() {
   const columns = useMemo(
     () => [
       {
-        Header: 'ID MÁY IN',
-        accessor: 'printer_id',
+        Header: 'ID HỌC SINH',
+        accessor: 'stu_id',
       },
       {
-        Header: 'VỊ TRÍ',
-        accessor: 'location',
-      },
-      {
-        Header: 'SỐ GIẤY',
-        accessor: 'num_paper',
-        Cell: ({ row, value }) => (
-          <div>
+        Header: 'HỌ TÊN',
+        accessor: 'stu_name',
+        Cell: ({ value }) => (
+          <div style={{ textAlign: 'left' }}>
             {value}
-            <button 
-            className={styles.button}
-            onClick={() => refillPaper(row.original.printer_id)}
-            >
-              <FaNewspaper style={{ verticalAlign: 'middle', marginLeft: '25px', height: '25px', width: '25px' }} />
-            </button>
           </div>
-        ),
+        )
+      },
+      {
+        Header: 'SỐ TIỀN',
+        accessor: 'money',
+        Cell: ({ value }) => (
+          <div style={{ textAlign: 'right' }}>
+            {value} VND
+          </div>
+        )
       },
       {
         Header: 'TÌNH TRẠNG',
         accessor: 'status',
-        Cell: ({ value }) => (
-          <div
-            className={`${styles.statusBadge} ${value === 'Bật' ? styles.bật : value === 'Tắt' ? styles.tắt : styles.bảo_trì}`}
-          >
-            {value}
-          </div>
-        ),
+        Cell: ({ value }) => {
+          const isIn = value === 'IN';
+        
+          const displayText = isIn ? 'Đang gửi xe' : 'Đang off';
+          const statusClass = isIn ? styles.bật : styles.tắt;
+        
+          return (
+            <div className={`${styles.statusBadge} ${statusClass}`}>
+              {displayText}
+            </div>
+          );
+        },
       },
       {
-        Header: 'LỊCH SỬ IN',
-        Cell: ({ row }) => (
-          <button
-            className={styles.button}
-            onClick={() => {
-              navigate(`/spso_homepage/manage_printer/printer_log?printer_id=${row.original.printer_id}`);
-            }}
-          >
-            <IoEyeSharp className={styles.icon} />
-          </button>
-        ),
+        Header: 'USERNAME',
+        accessor: 'username',
       },
       {
-        Header: 'CÀI ĐẶT',
-        Cell: ({ row }) => <button
-          className={styles.button}
-          onClick={() => {
-            setSelectedPrinter(row.original)
-            setIsSettingOpen(true)
-            setStatus(row.original.status)
-          }}>
-          <IoSettingsSharp className={styles.icon} />
-        </button>
+        Header: 'PASSWORD',
+        accessor: 'password',
       },
     ],
     []
@@ -182,7 +171,7 @@ function ManagePrinter() {
           <input
             type="text"
             className={styles.searchInput}
-            placeholder="Nhập vị trí máy in"
+            placeholder="Nhập tên học sinh"
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
@@ -191,7 +180,7 @@ function ManagePrinter() {
         </div>
 
         <button className={styles.addPrinter} onClick={() => navigate('/spso_homepage/manage_printer/add_printer')}>
-          THÊM MÁY IN
+          THÊM HỌC SINH
         </button>
       </div>
 

@@ -267,6 +267,43 @@ const get_history_all = async (req, res) => {
     }
 };
 
+const get_all_student_info = async (req, res) => {
+    try {
+        const query = `
+        SELECT 
+            s.*,
+            h.status
+        FROM student s
+        LEFT JOIN (
+            SELECT h1.*
+            FROM History h1
+            JOIN (
+                SELECT student_used, MAX(start_time) AS max_time
+                FROM History
+                GROUP BY student_used
+            ) latest
+            ON h1.student_used = latest.student_used AND h1.start_time = latest.max_time
+        ) h
+        ON s.stu_name = h.student_used;
+
+        `;
+
+        const [result] = await database.query(query);
+        console.log(result)
+        return res.status(200).json({
+            success: true,
+            message: 'All student info retrieved successfully.',
+            data: result
+        });
+    } catch (error) {
+        console.error('Error retrieving student info:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve student info.',
+        });
+    }
+};
+
 const get_yearly_statistics = async (req, res) => {
     const year = req.body.year;  // Retrieve the year from the body
     
@@ -461,5 +498,5 @@ module.exports = {
     get_history_all,
     get_yearly_statistics,
     get_month_statistics,
-
+    get_all_student_info
 };
