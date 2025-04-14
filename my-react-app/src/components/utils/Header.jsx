@@ -40,10 +40,10 @@ function Header({ text, paper, showLogout, isStudent }) {
                 <div className={styles.homebar}>
                     <div className={styles.bar}>
                         <button className={styles.button} onClick={() => navigate('/spso_homepage')}>HOME</button>
-                        <button className={styles.button} onClick={() => navigate('/spso_homepage/manage_printer')}>MÁY IN</button>
-                        <button className={styles.button} onClick={() => navigate('/spso_homepage/manage_cofig')}>CẤU HÌNH</button>
+                        <button className={styles.button} onClick={() => navigate('/spso_homepage/manage_printer')}>SINH VIÊN</button>
+                        <button className={styles.button} onClick={() => navigate('/spso_homepage/manage_cofig')}>GIÁ TIỀN</button>
                         <button className={styles.button} onClick={() => navigate('/spso_homepage/view_stu_log')}>THÔNG TIN GỬI XE SINH VIÊN</button>
-                        <button className={styles.button} onClick={() => navigate('/spso_homepage/spso_report_month')}>BÁO CÁO</button>
+                        <button className={styles.button} onClick={() => navigate('/spso_homepage/view_visitor_log')}>THÔNG TIN GỬI XE KHÁCH</button>
                     </div>
                 </div>
             )}

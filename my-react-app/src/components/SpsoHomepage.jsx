@@ -18,17 +18,17 @@ function SpsoHomepage() {
         <img src={banner} alt="Banner" className={styles.banner_image} />
         <div className={styles.whiteRectangle}>
           <button className={styles.button} onClick={() => navigate('/spso_homepage/manage_printer')}>
-            Quản lý máy in
+            Thông tin sinh viên
             {/* <FaBell className={styles.noti}/> */}
           </button>
           <button className={styles.button} onClick={() => navigate('/spso_homepage/manage_cofig')}>
-            Quản lý cấu hình hệ thống
+            Cài đặt giá tiền
           </button>
           <button className={styles.button} onClick={() => navigate('/spso_homepage/view_stu_log')}>
             Thông tin gửi xe của sinh viên
           </button>
-          <button className={styles.button} onClick={() => navigate('/spso_homepage/spso_report_month')}>
-            Báo cáo in ấn
+          <button className={styles.button} onClick={() => navigate('/spso_homepage/view_visitor_log')}>
+          Thông tin gửi xe của khách
           </button>
         </div>
       </section>

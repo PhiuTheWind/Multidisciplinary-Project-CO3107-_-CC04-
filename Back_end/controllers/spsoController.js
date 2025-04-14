@@ -248,6 +248,43 @@ const get_history_all = async (req, res) => {
             JOIN
                 Student s ON r.student_used = s.stu_name 
                 and r.MSSV = s.stu_id
+            ORDER BY r.start_time DESC
+
+        `;
+
+        const [result] = await database.query(query);
+
+        return res.status(200).json({
+            success: true,
+            message: 'History retrieved successfully.',
+            data: result
+        });
+    } catch (error) {
+        console.error('Error retrieving history:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve history.',
+        });
+    }
+};
+
+
+const get_history_visitor_all = async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                parking_date,
+                bien_so_xe,
+                status,
+                start_time,
+                end_time,
+                parking_time, 
+                Price,
+                Card_id
+
+            FROM 
+                Visitor 
+            ORDER BY start_time DESC
 
         `;
 
@@ -286,6 +323,7 @@ const get_all_student_info = async (req, res) => {
         ) h
         ON s.stu_name = h.student_used;
 
+
         `;
 
         const [result] = await database.query(query);
@@ -303,6 +341,103 @@ const get_all_student_info = async (req, res) => {
         });
     }
 };
+const get_parking_price = async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                time_interval,
+                price
+            FROM 
+                Price_parking 
+            ORDER BY FIELD(time_interval, 'morning', 'evening', 'weekend')
+        `;
+
+        const [result] = await database.query(query);
+
+        return res.status(200).json({
+            success: true,
+            message: 'price retrieved successfully.',
+            data: result
+        });
+    } catch (error) {
+        console.error('Error retrieving price:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve price.',
+        });
+    }
+};
+
+const add_student = async (req, res) => {
+    const {name, MSSV, username, password, Id_card, money} = req.body;
+
+    console.log(req.body)
+    try {
+        // Validate inputs
+        // if (!Id_card || !mssv) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: 'Missing are required.',
+        //     });
+        // }
+
+        const query = `
+            INSERT INTO student (username, password, stu_id, stu_name, card_id, money )
+            VALUES (?, ?, ?, ?, ?,?)
+        `;
+        const values = [username, password, MSSV, name, Id_card, money];
+  
+        await database.query(query, values);
+        return res.status(201).json({
+            success: true,
+            message: 'Student added successfully.',
+        });
+    } catch (error) {
+        console.error('Error adding new Student:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to add new Student.',
+        });
+    }
+};
+const update_parking_price = async (req, res) => {
+  
+    const {morning, evening, weekend} = req.body;
+
+
+    try {
+        
+        console.log(req.body)
+
+   
+   
+        await database.query(
+            `UPDATE Price_parking SET price = ? WHERE time_interval = 'morning'`,
+            [morning]
+        );
+    
+        await database.query(
+            `UPDATE Price_parking SET price = ? WHERE time_interval = 'evening'`,
+            [evening]
+        );
+    
+        await database.query(
+            `UPDATE Price_parking SET price = ? WHERE time_interval = 'weekend'`,
+            [weekend]
+        );
+        return res.status(201).json({
+            success: true,
+            message: 'Price update successfully.',
+        });
+    } catch (error) {
+        console.error('Error Price update:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to Price update.',
+        });
+    }
+};
+
 
 const get_yearly_statistics = async (req, res) => {
     const year = req.body.year;  // Retrieve the year from the body
@@ -498,5 +633,10 @@ module.exports = {
     get_history_all,
     get_yearly_statistics,
     get_month_statistics,
-    get_all_student_info
+    get_all_student_info,
+
+    add_student,
+    get_parking_price,
+    update_parking_price,
+    get_history_visitor_all
 };

@@ -15,8 +15,13 @@ router.post('/year_report',spsoController.get_yearly_statistics)
 router.post('/month_report',spsoController.get_month_statistics)
 
 
+
+router.post('/add_student', spsoController.add_student);
 router.get('/history', spsoController.get_history_all)
 router.get('/manage_student_info',spsoController.get_all_student_info)
+router.get('/history_visitor',spsoController.get_history_visitor_all)
+router.get('/price',spsoController.get_parking_price)
+router.post('/price_update',spsoController.update_parking_price)
 //router.get('/report', spsoController.report);
 
 module.exports = router;    

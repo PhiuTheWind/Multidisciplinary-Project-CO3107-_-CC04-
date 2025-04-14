@@ -16,7 +16,6 @@ function SpsoViewStuLog() {
     const [error, setError] = useState(null);
     const [start_time, setStartTime] = useState(null)
     const [end_time, setEndTime] = useState(null)
-    const [stuid, setStuID] = useState("")
     const [status, setStatus] = useState("")
     const [selectedrow, setSelectedRow] = useState(null)
     const [isView, setIsViewOpen] = useState(false)
@@ -42,9 +41,19 @@ function SpsoViewStuLog() {
         }).format(new Date(dateString));
     };
 
+    const formatDateTime = (datetimeStr) => {
+        if (!datetimeStr) return "-";
+        const date = new Date(datetimeStr);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+
+      
+        return `${hours}:${minutes} `;
+      };
+
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/api/history');
+            const response = await axios.get('http://localhost:3000/api/history_visitor');
             if (response.data.success) {
                 console.log("Fetched data:", response.data.data); // In ra dữ liệu
                 setData(response.data.data);
@@ -66,36 +75,47 @@ function SpsoViewStuLog() {
         const filtered = data.filter((row) => {
             const startTimeFilter = start_time ? new Date(row.start_time) >= new Date(start_time) : true;
             const endTimeFilter = end_time ? new Date(row.end_time) <= new Date(end_time) : true;
-            const stuIdFilter = stuid ? row.stu_id.includes(stuid) : true;
+ 
             const statusFilter = status ? row.status === status : true;
 
-            return startTimeFilter && endTimeFilter && stuIdFilter && statusFilter;
+            return startTimeFilter && endTimeFilter &&  statusFilter;
         });
 
         setFilteredData(filtered);
-    }, [data, start_time, end_time, stuid, status]);
+    }, [data, start_time, end_time,  status]);
 
     const columns = useMemo(
         () => [
-            {
-                Header: 'MSSV',
-                accessor: 'stu_id',
-                Cell: ({ value }) => <div style={{ width: '80px' }}>{value}</div>,
-            },
+
             {
                 Header: 'BIỂN SỐ XE',
                 accessor: 'bien_so_xe',
-                Cell: ({ value }) => <div style={{ width: '100px' }}>{value}</div>,
+                Cell: ({ value }) => <div style={{ textAlign: 'middle' }}>{value}</div>,
             },
             {
-                Header: 'TÊN HỌC SINH',
-                accessor: 'stu_name',
-                Cell: ({ value }) => <div style={{ textAlign: 'left' }}>{value}</div>, // Align text left
+                Header: 'Card ID',
+                accessor: 'Card_id',
+                Cell: ({ value }) => <div style={{ textAlign: 'middle' }}>{value}</div>, // Align text left
             },
             {
-                Header: 'NGÀY GỬI XE',
+                Header: 'NGÀY GỬI',
                 accessor: 'parking_date',
                 Cell: ({ value }) => formatDateOnly(value),
+            },
+            {
+                Header: 'THỜI GIAN VÀO',
+                accessor: 'start_time',
+                Cell: ({ value }) => formatDateTime(value),
+            },
+            {
+                Header: 'THỜI GIAN RA',
+                accessor: 'end_time',
+                Cell: ({ value }) => formatDateTime(value),
+            },
+            {
+                Header: 'THỜI GIAN GỬI',
+                accessor: 'parking_time',
+                Cell: ({ value }) => formatDateTime(value),
             },
             {
                 Header: 'TÌNH TRẠNG',
@@ -108,20 +128,7 @@ function SpsoViewStuLog() {
                     </div>
                 ),
             },
-            {
-                Header: 'CHI TIẾT',
-                Cell: ({ row }) => (
-                    <button
-                        className={styles.button}
-                        onClick={() => {
-                            setSelectedRow(row.original)
-                            setIsViewOpen(true)
-                        }}
-                    >
-                        <IoEyeSharp className={styles.icon} />
-                    </button>
-                ),
-            },
+
         ],
         []
     );
@@ -165,16 +172,7 @@ function SpsoViewStuLog() {
                         dateFormat="dd/MM/yyyy"
                     />
                 </div>
-                <div className={styles.input_stuid}>
-                    <label className={styles.search_label}><IoSearch /> MSSV</label>
-                    <input
-                        type='text'
-                        className={styles.stuinput}
-                        placeholder='Nhập MSSV'
-                        value={stuid}
-                        onChange={(e) => setStuID(e.target.value)}
-                    />
-                </div>
+
                 <div className={styles.input_id}>
                     <label className={styles.search_label}><IoSearch /> Trạng thái </label>
                     <select
@@ -238,15 +236,15 @@ function SpsoViewStuLog() {
                                 <span className={styles.value}>{selectedrow?.stu_name}</span>
                             </div>
                             <div className={styles.row}>
-                                <label className={styles.field}>Thời gian vào bãi:</label>
+                                <label className={styles.field}>Thời gian vào:</label>
                                 <span className={styles.value}>{formatDate(selectedrow?.start_time)}</span>
                             </div>
                             <div className={styles.row}>
-                                <label className={styles.field}>Thời gian ra bãi:</label>
+                                <label className={styles.field}>Thời gian ra:</label>
                                 <span className={styles.value}>{formatDate(selectedrow?.end_time)}</span>
                             </div>
                             <div className={styles.row}>
-                                <label className={styles.field}>Ngày gửi xe :</label>
+                                <label className={styles.field}>Ngày gửi:</label>
                                 <span className={styles.value}>{formatDateOnly(selectedrow?.parking_date)}</span>
                             </div>
                             <div className={styles.row}>

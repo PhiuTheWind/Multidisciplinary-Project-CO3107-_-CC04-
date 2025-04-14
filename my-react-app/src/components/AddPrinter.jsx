@@ -6,11 +6,14 @@ import { IoMdArrowDropdown } from "react-icons/io";
 
 function AddPrinter() {
   const [isActive, setIsActive] = useState(false);
-  const [selectedStatus, setStatus] = useState("Bật");
-  const [numPaper, setNumPaper] = useState(500); // Default paper count
-  const [printerName, setPrinterName] = useState("");
-  const [location, setLocation] = useState("");
-  const [ipAddress, setIpAddress] = useState("");
+
+  const [money, setMoney] = useState(50000); // Default paper count
+  const [studentName, setstudentName] = useState("");
+  const [MSSV, setMSSV] = useState("");
+  const [username, setusername] = useState("");
+  const [password, setpassword] = useState("");
+  const [cardid, setcardid] = useState("");
+  
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -21,33 +24,34 @@ function AddPrinter() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!printerName || !location || !ipAddress || !selectedStatus) {
+    if (!studentName || !MSSV || !username || !cardid|| !password|| !money) {
       setErrorMessage("Vui lòng nhập tất cả các trường!");
       return;
     }
 
-    if (Number(numPaper) < 0) {
-      setError('Số lượng giấy phải lớn hơn 0.');
+    if (Number(money) < 0) {
+      setError('Số tiền lớn hơn 0.');
       return;
     }
 
     setError('');
 
-    const statusValue = selectedStatus === "Bật" ? "Bật" : "Tắt"; 
+
 
     // Call API
     try {
-      const response = await fetch("http://localhost:3000/api/add_printer", {
+      const response = await fetch("http://localhost:3000/api/add_student", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          num_paper: numPaper,
-          location,
-          status: statusValue,
-          printer_name: printerName,
-          ip: ipAddress,
+          name: studentName,
+          MSSV: MSSV,
+          username: username,
+          password: password,
+          Id_card: cardid,
+          money: money
         }),
       });
 
@@ -57,10 +61,11 @@ function AddPrinter() {
         alert("Đã thêm thành công");
         setErrorMessage("");
         // Reset form
-        setPrinterName("");
-        setLocation("");
-        setIpAddress("");
-        setStatus("");
+        setstudentName("");
+        setMSSV("");
+        setusername("");
+        setpassword("");
+        setMoney("")
       } else {
         setErrorMessage(result.message || "Có lỗi xảy ra, vui lòng thử lại.");
         alert("Có lỗi xảy ra, vui lòng thử lại.");
@@ -80,7 +85,7 @@ function AddPrinter() {
       <section className={styles.add_printer_section}>
         {/* <form className={styles.form}> */}
         <form className={styles.form} onSubmit={handleSubmit}>
-          <h1 className={styles.header}>THÊM THÔNG TIN MÁY IN</h1>
+          <h1 className={styles.header}>THÊM THÔNG TIN HỌC SINH</h1>
           {/* <div className={styles.input_group}>
             <label className={styles.name}>ID máy in</label>
             <input 
@@ -91,82 +96,74 @@ function AddPrinter() {
             />
           </div> */}
           <div className={styles.input_group}>
-            <label className={styles.name}>Tên máy in</label>
+            <label className={styles.name}>Tên học sinh</label>
             <input 
               type='text'
-              placeholder='Nhập tên máy in...'
+              placeholder='Nhập tên học sinh...'
               className={styles.input}
               required
-              value={printerName}
-              onChange={(e) => setPrinterName(e.target.value)}
+              value={studentName}
+              onChange={(e) => setstudentName(e.target.value)}
 
             />
           </div>
           <div className={styles.input_group}>
-            <label className={styles.name}>Vị trí</label>
+            <label className={styles.name}>MSSV </label>
             <input 
               type='text'
-              placeholder='Nhập vị trí máy in...'
+              placeholder='Nhập MSSV...'
               className={styles.input}
               required
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              value={MSSV}
+              onChange={(e) => setMSSV(e.target.value)}
             />
           </div>
           <div className={styles.input_group}>
-            <label className={styles.name}>Địa chỉ IP</label>
+            <label className={styles.name}>Username</label>
             <input 
               type='text'
-              placeholder='Nhập địa chỉ IP máy in...'
+              placeholder='Nhập username...'
               className={styles.input}
               required
-              value={ipAddress}
-              onChange={(e) => setIpAddress(e.target.value)}
+              value={username}
+              onChange={(e) => setusername(e.target.value)}
 
             />
           </div>
           <div className={styles.input_group}>
-            <label className={styles.name}>Trạng thái</label>
-            <div className={styles.dropdown}>
-              <div className={styles.dropdown_btn} onClick={(e) => setIsActive(!isActive)}>
-                <p className={`
-                  ${styles.text_status} ${selectedStatus === "Bật"
-                    ? styles.on
-                    : selectedStatus === "Tắt"
-                      ? styles.off
-                      : ""
-                  }
-                `}>
-                  {selectedStatus || "Chọn trạng thái"}
-                </p>
-                <IoMdArrowDropdown className={styles.dropicon}/>
-              </div>
-              {isActive && (
-                <div className={styles.dropdown_content}>
-                  {statusOptions.map(option => (
-                    <div key={option} 
-                    className={styles.dropdown_item} 
-                      onClick={() => {
-                        setStatus(option);
-                        setIsActive(false);
-                      }
-                    }>
-                      {option}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <label className={styles.name}>Password</label>
+            <input 
+              type='text'
+              placeholder='Nhập password...'
+              className={styles.input}
+              required
+              value={password}
+              onChange={(e) => setpassword(e.target.value)}
+
+            />
           </div>
           <div className={styles.input_group}>
-            <label className={styles.name}>Số trang</label>
+            <label className={styles.name}>ID thẻ </label>
+            <input 
+              type='text'
+              placeholder='Nhập ID thẻ...'
+              className={styles.input}
+              required
+              value={cardid}
+              onChange={(e) => setcardid(e.target.value)}
+
+            />
+          </div>
+          <div className={styles.input_group}>
+            <label className={styles.name}>Số tiền (VND)</label>
             <input 
               type="number"
-              placeholder="Nhập số trang..."
+              placeholder="Nhập số tiền...."
               className={styles.input}
               required
-              value={numPaper}
-              onChange={(e) => setNumPaper(Number(e.target.value))}
+              value={money}
+              onChange={(e) => setmoney(Number(e.target.value))}
+              
             />
           </div>
           {/* <button className={styles.addbutton}>THÊM</button> */}

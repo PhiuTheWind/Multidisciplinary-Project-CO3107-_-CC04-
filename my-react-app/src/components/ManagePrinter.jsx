@@ -98,9 +98,19 @@ function ManagePrinter() {
       },
       {
         Header: 'HỌ TÊN',
+    
         accessor: 'stu_name',
         Cell: ({ value }) => (
           <div style={{ textAlign: 'left' }}>
+            {value}
+          </div>
+        )
+      },
+      {
+        Header: 'ID THẺ ',
+        accessor: 'card_id',
+        Cell: ({ value }) => (
+          <div style={{ textAlign: 'middle' }}>
             {value}
           </div>
         )
@@ -120,7 +130,7 @@ function ManagePrinter() {
         Cell: ({ value }) => {
           const isIn = value === 'IN';
         
-          const displayText = isIn ? 'Đang gửi xe' : 'Đang off';
+          const displayText = isIn ? 'Đang gửi xe' : 'Off';
           const statusClass = isIn ? styles.bật : styles.tắt;
         
           return (
@@ -225,141 +235,7 @@ function ManagePrinter() {
         )}
       </div>
 
-      {isSettingOpen && (
-        <div className={styles.popup}>
-          <div className={styles.popup_info}>
-            <h2 className={styles.h2}>Thông Tin Máy In</h2>
-            <div className={styles.info}>
-              <div className={styles.row}>
-                <label className={styles.field}>ID Máy In:</label>
-                <span className={styles.value}>{selectedPrinter?.printer_id}</span>
-              </div>
 
-              <div className={styles.row}>
-                <label className={styles.field}>Tên Máy In:</label>
-                <span className={styles.value}>{selectedPrinter?.printer_name}</span>
-              </div>
-
-              <div className={styles.row}>
-                <label className={styles.field}>Địa Chỉ IP:</label>
-                <span className={styles.value}>{selectedPrinter?.ip}</span>
-              </div>
-
-              <div className={styles.row}>
-                <label className={styles.field}>Vị Trí:</label>
-                <span className={styles.value}>{selectedPrinter?.location}</span>
-              </div>
-
-              <div className={styles.row}>
-                <label className={styles.field}>Số Giấy:</label>
-                <span className={styles.value}>{selectedPrinter?.num_paper}</span>
-              </div>
-
-              <div className={styles.row}>
-                <label className={styles.field}>Trạng Thái:</label>
-                <span className={`
-                  ${styles.value} ${selectedStatus === "Bật"
-                    ? styles.on
-                    : selectedStatus === "Tắt"
-                      ? styles.off
-                      : styles.mantenance
-                  }
-                `}>{selectedStatus}</span>
-              </div>
-            </div>
-
-            <div className={styles.mod}>
-              <div className={styles.row}>
-                <label className={styles.field}>Điều chỉnh trạng thái:</label>
-                <div className={styles.dropdown}>
-                  <div className={`
-                  ${styles.dropdown_btn} ${selectedStatus === "Bật"
-                    ? styles.on
-                    : selectedStatus === "Tắt"
-                      ? styles.off
-                      : styles.mantenance
-                  }
-                `} onClick={(e) => setIsActive(!isActive)}>
-                    <p>{selectedStatus}</p>
-                    <TiArrowSortedDown/>
-                  </div>
-
-                  {isActive && (
-                    <div className={styles.dropdown_content}>
-                      {statusOption.filter(option => (option != selectedStatus)).map(option => (
-                        <div key={option} 
-                          className={styles.dropdown_item}
-                          onClick={() => {
-                            setStatus(option)
-                            setIsActive(!isActive)
-                          }
-                          }>
-                          {option}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.popup_btn}>
-              <button
-                className={styles.close_popup}
-                onClick={() => {
-                  setIsSettingOpen(false)
-                }}
-              >
-                HỦY
-              </button>
-              {/* <button
-                className={styles.save_popup}
-                onClick={() => setIsSettingOpen(false)}
-              > */}
-              <button
-                className={styles.save_popup}
-                onClick={async () => {
-                  try {
-                    const response = await fetch('http://localhost:3000/api/modify_status', {
-                      method: 'PATCH',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({
-                        printerId: selectedPrinter?.printer_id,
-                        newSettings: selectedStatus,
-                      }),
-                    });
-
-                    const result = await response.json();
-
-                    if (response.ok && result.success) {
-                      //alert('Cập nhật trạng thái thành công!');
-                      // pop up ... neu can ?..
-                      setIsSettingOpen(false);
-
-                      // Optionally refresh the data to reflect the updated status
-                      const updatedData = data.map((printer) =>
-                        printer.printer_id === selectedPrinter?.printer_id
-                          ? { ...printer, status: selectedStatus }
-                          : printer
-                      );
-                      setData(updatedData);
-                    } else {
-                      alert(`Lỗi: ${result.message || 'Không thể cập nhật trạng thái'}`);
-                    }
-                  } catch (error) {
-                    console.error('Error updating status:', error);
-                    alert('Đã xảy ra lỗi khi cập nhật trạng thái.');
-                  }
-                }}
-              >
-                LƯU
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <Footer />
     </div>

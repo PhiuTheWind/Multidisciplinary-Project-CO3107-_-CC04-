@@ -8,6 +8,11 @@ import 'react-datepicker/dist/react-datepicker.css';
 function ManageConfig() {
   const [date, setDate] = useState(new Date());
   const [defaultPage, setDefaultPage] = useState('');
+
+  const [morning, setMorning] = useState('');
+  const [evening, setEvening] = useState('');
+  const [weekend, setWeekend] = useState('');
+
   const [fileTypes, setFileTypes] = useState({
     pdf: false,
     docx: false,
@@ -18,25 +23,12 @@ function ManageConfig() {
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/sysconfig');
+        const response = await fetch('http://localhost:3000/api/price');
         const data = await response.json();
-        console.log('Fetched Data:', data);
         if (data.success) {
-          const page = data.page ? parseInt(data.page, 10) : 100; // Default = 100 
-        
-        const date = data.date ? new Date(data.date.split('/').reverse().join('-')) : new Date(); // Format YYYY-MM-DD
-        
-        const fileTypes = {
-          pdf: data.type?.includes('pdf') || false,
-          docx: data.type?.includes('docx') || false,
-          jpg: data.type?.includes('jpg') || false,
-          png: data.type?.includes('png') || false,
-        };
-
-        // set config theo env
-        setDefaultPage(page);
-        setDate(date);
-        setFileTypes(fileTypes);
+          setMorning(data.data[0].price)
+          setEvening(data.data[1].price)
+          setWeekend(data.data[2].price)
         } else {
           console.error('Error:', error);
         }
@@ -56,26 +48,23 @@ function ManageConfig() {
   const saveConfig = async () => {
     try {
       const payload = {
-        page: defaultPage,
-        date: date.toLocaleDateString('en-GB'),
-        type: Object.keys(fileTypes)
-          .filter((key) => fileTypes[key])
-          .join(','),
+        morning: morning,
+        evening: evening,
+        weekend: weekend
       };
-
-      const response = await fetch('http://localhost:3000/api/sysconfig_patch', {
-        method: 'PATCH',
+      console.log(payload)
+      const response = await fetch('http://localhost:3000/api/price_update', {
+        method: 'POST', 
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       });
 
       const result = await response.json();
       if (response.ok) {
         console.log('Response:', result);
         alert('Configuration updated successfully!');
-        //de cai alert tam, them pop up thi xoa alert
       } else {
         console.error('Error:', result.message);
         alert(`Failed to update configuration: ${result.message}`);
@@ -90,55 +79,47 @@ function ManageConfig() {
 
   return (
     <div className={styles.container}>
-      <Header text='SPSO NAME' showLogout={true} />
+      <Header text='ADMIN' showLogout={true} />
 
       <section className={styles.config}>
         <form id="loginForm" className={styles.login_form}>
-          <h1 className={styles.h1}>Quản lý cấu hình hệ thống</h1>
+          <h1 className={styles.h1}>Quản lý giá gửi xe</h1>
           <div className={styles.input_group}>
-            <label className={styles.name}>Số giấy mặc định sinh viên nhận mỗi kỳ:</label>
+            <label className={styles.name}>6h - 18h, Thứ 2 - Thứ 6 (VND):</label>
             <input
               type="number"
-              placeholder='Nhập số giấy...'
+              placeholder='Nhập số tiền...'
               className={styles.input}
+              
               //value={100}
-              value={defaultPage}
-              onChange={(e) => setDefaultPage(e.target.value)}
+              value={morning}
+              onChange={(e) => setMorning(e.target.value)}
               required
             />
           </div>
           <div className={styles.input_group}>
-            <label className={styles.name}>Ngày cấp giấy cho sinh viên:</label>
-            <DatePicker className={styles.datepick}
-              selected={date}
-              placeholderText="dd/mm/yyyy"
-              onChange={date => setDate(date)}
-              dateFormat='dd/MM/yyyy'
+            <label className={styles.name}>18h - 22h, Thứ 2 - Thứ 6 (VND):</label>
+            <input
+              type="number"
+              placeholder='Nhập số tiền...'
+              className={styles.input}
+              //value={100}
+              value={evening}
+              onChange={(e) => setEvening(e.target.value)}
+              required
             />
           </div>
-          <div className={styles.checkfiled}> 
-            <label className={styles.name}>Định dạng file cho phép:</label>
-            
-            {/* <div className={styles.filetype}>
-              <p> pdf <input className={styles.check} type='checkbox'/></p>
-              <p> docx <input className={styles.check} type='checkbox'/></p>
-              <p> jpg <input className={styles.check} type='checkbox'/></p>
-              <p> png <input className={styles.check} type='checkbox'/></p>
-            </div> */}
-            <div className={styles.filetype}>
-              {Object.keys(fileTypes).map((type) => (
-                <p key={type}>
-                  {type}{' '}
-                  <input
-                    className={styles.check}
-                    type="checkbox"
-                    checked={fileTypes[type]}
-                    onChange={() => handleCheckboxChange(type)}
-                  />
-                </p>
-              ))}
-            </div>
-            
+          <div className={styles.input_group}> 
+            <label className={styles.name}>Thứ 7, Chủ nhật (VND):</label>
+              <input
+                type="number"
+                placeholder='Nhập số tiền...'
+                className={styles.input}
+                //value={100}
+                value={weekend}
+                onChange={(e) => setWeekend(e.target.value)}
+                required
+              />
           </div>
           {/* <button className={styles.button} type="submit"> */}
           <button className={styles.button} type="button" onClick={saveConfig}>
