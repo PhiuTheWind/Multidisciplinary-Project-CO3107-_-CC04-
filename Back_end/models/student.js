@@ -47,12 +47,10 @@ const getInfo_Printer = async () => {
 }
 
 async function getStudentLogInfo(username) {
+    console.log("uuuuuuuuuuuuuuu")
     try {
-        const [result] = await database.query(`SELECT E.file_name, E.request_id, E.paper_size, E.num_copies, E.side_option, E.selected_pages, E.status, E.start_date, E.end_date, E.received_date, E.student_send, E.printer_id, F.location
-                                        FROM request E
-                                        JOIN printer F ON F.printer_id = E.printer_id
-                                        WHERE E.student_send = ?
-                                        ORDER BY E.request_id DESC`, [username]);
+
+        const [result] = await database.query(`SELECT * FROM Student WHERE username = ?`, [username]);
         
         return result;
     } catch (err) {

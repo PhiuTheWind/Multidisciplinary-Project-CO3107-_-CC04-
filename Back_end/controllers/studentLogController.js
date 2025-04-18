@@ -3,6 +3,7 @@ const {getStudentLogInfo} = require('../models/student');
 
 const GetStudentLog = async(req, res, next) => {
     try {
+        console.log("siuuuuuuuuuuuuuuuuuuuuuuuuu")
         const username = req.userInfo.username
       
 

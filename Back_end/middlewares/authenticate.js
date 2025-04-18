@@ -6,7 +6,7 @@ function authenticate(req, res, next) {
     if (!token) {
         return res.status(401).send('Truy cập bị từ chối');
     }
-    
+    console.log("ooooooooooooooo")
     jwt.verify(token, 'group3cnpmcc01', (err, decoded) => {
         if (err) {
             return res.status(401).send('Truy cập bị từ chối');
