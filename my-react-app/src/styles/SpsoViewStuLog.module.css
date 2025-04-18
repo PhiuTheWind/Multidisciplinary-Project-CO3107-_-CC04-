@@ -311,11 +311,13 @@
 }
 
 .receive {
-    color: #30C10F;
+    color: red;
+    font-weight: bold;
 }
 
 .unreceive {
-    color: #f44336;
+    color: green;
+    font-weight: bold;
     
 }
 

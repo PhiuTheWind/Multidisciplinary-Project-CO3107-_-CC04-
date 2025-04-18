@@ -20,12 +20,15 @@ function StudentViewLog() {
 
     const GetLogInfo = async () => {
         try {
+            
             const response = await axios.post(log_url, {}, {
                 withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
+            console.log("iiiiiiiiiiiiiiiiiiiii")
+            console.log(response.data)
             if (response.status === 200) {
                 setStudentLogInfo(response.data)
             }

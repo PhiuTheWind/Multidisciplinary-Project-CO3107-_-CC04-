@@ -21,7 +21,7 @@ import PrintingConfigure from './components/Printing_configure.jsx';
 import ChoosePrinter from './components/ChoosePrinter.jsx';
 import PurchasePaperModal from './components/PurchasePaperModal.jsx';
 import StudentSummary from './components/StudentSummary.jsx';
-
+import SpsoViewVisitorLog from './components/SpsoViewVisitorLog.jsx';
 
 function App() {
   const [user, setUser] = useState({ token: null, isSPSO: false, listFiles: [] });
@@ -62,6 +62,7 @@ function App() {
             <Route path="/spso_homepage/manage_printer/printer_log" element={<PrinterLog />} />
             <Route path="/spso_homepage/manage_cofig" element={<ManageConfig />} />
             <Route path="/spso_homepage/view_stu_log" element={<SpsoViewStuLog />} />
+            <Route path="/spso_homepage/view_visitor_log" element={<SpsoViewVisitorLog />} />
             <Route path="/spso_homepage/spso_report_month" element={<Report4SPSOMonth />} />
             <Route path="/spso_homepage/spso_report_year" element={<Report4SPSOYear />} />
 
