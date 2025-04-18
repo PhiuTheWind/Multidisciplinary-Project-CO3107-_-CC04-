@@ -1,7 +1,3 @@
-
-
-
-
 -- CREATE DATABASE IF NOT EXISTS `hcmut_spss`;
 
 -- USE `hcmut_spss`;
