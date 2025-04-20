@@ -71,7 +71,11 @@ async function getStudentLogParkInfo(username) {
     }
 
     const MSSV = studentResult[0].stu_id;
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 18f99273f4aadfdd158c5eadf888c6ab4f539c19
     // Then fetch all parking history for this student using their MSSV
     const [historyResult] = await database.query(
       "SELECT * FROM History WHERE MSSV = ? ORDER BY parking_date DESC",
