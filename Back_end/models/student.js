@@ -60,7 +60,7 @@ async function getStudentLogInfo(username) {
 async function getStudentLogParkInfo(username) {
   try {
     // First, get the student's ID (MSSV/stu_id) using their username
-    const [studentResult] = await database.query("SELECT stu_id FROM student WHERE username = ?", [
+    const [studentResult] = await database.query("SELECT * FROM student WHERE username = ?", [
       username,
     ]);
 
@@ -68,7 +68,7 @@ async function getStudentLogParkInfo(username) {
       return []; // Return empty array if student not found
     }
 
-    const MSSV = studentResult[0].MSSV;
+    const MSSV = studentResult[0].stu_id;
 
     // Then fetch all parking history for this student using their MSSV
     const [historyResult] = await database.query(
