@@ -83,11 +83,13 @@
 
 /* Styling for the SPSO overlay image */
 .spso_image {
+    border-radius: 25px;
     position: absolute;
     top: 50%; /* Center vertically */
     left: 65%; /* Adjust positioning if needed */
     transform: translate(-50%, -50%);
-    width: 300px; /* Adjusted size for visibility */
+    width: 305px; /* Adjusted size for visibility */
+    height: 290px; /* giảm chiều cao */
     cursor: pointer;
     opacity: 0; /* Initially hidden */
     transition: opacity 0.3s ease; /* Smooth transition for opacity */

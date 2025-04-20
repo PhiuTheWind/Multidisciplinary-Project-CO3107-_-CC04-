@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import styles from '../styles/ChooseUser.module.css';
 import banner from '../assets/banner.png';
 import userstu from '../assets/user_student.png';
-import userspso from '../assets/user_spso.png';
+import userspso from '../assets/user_admin.png';
 import Footer from './utils/Footer';
 import Header from './utils/Header';
 

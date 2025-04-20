@@ -32,7 +32,7 @@ function StudentViewLog() {
           },
         }
       );
-      console.log("iiiiiiiiiiiiiiiiiiiii");
+
       console.log(response.data);
       if (response.status === 200) {
         setStudentLogInfo(response.data);
@@ -57,7 +57,7 @@ function StudentViewLog() {
           },
         }
       );
-      console.log("iiiiiiiiiiiiiiiiiiiii");
+
       console.log(response.data);
       if (response.status === 200) {
         setStudentLogInfo(response.data);

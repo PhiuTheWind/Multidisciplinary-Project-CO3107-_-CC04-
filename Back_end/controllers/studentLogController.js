@@ -25,7 +25,7 @@ const GetStudentLog = async (req, res, next) => {
 
 const GetStudentParkLog = async (req, res, next) => {
   try {
-    console.log("siuuuuuuuuuuuuuuuuuuuuuuuuu");
+
     const username = req.userInfo.username;
 
     if (!username) {
