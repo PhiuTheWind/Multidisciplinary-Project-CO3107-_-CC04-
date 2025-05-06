@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "../../styles/Header.module.css";
 import spss from "../../assets/PRINTING SERVICE.png";
+import logo from "../../assets/logo.png";
 import ava from "../../assets/avatar.png";
 import { IoIosLogOut } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -21,17 +22,17 @@ function Header({ text, money, showLogout, isStudent }) {
       <div className={styles.header_logo}>
         {!isStudent && showLogout && (
           <button className={styles.home_btn} onClick={() => navigate("/spso_homepage")}>
-            <img className={styles.img} src={spss} alt="BK Student Smart Parking Service" />
+            <img className={styles.img} src={logo} alt="BK Student Smart Parking Service" />
           </button>
         )}
         {isStudent && showLogout && (
           <button className={styles.home_btn} onClick={() => navigate("/student_homepage")}>
-            <img className={styles.img} src={spss} alt="BK Student Smart Parking Service" />
+            <img className={styles.img} src={logo} alt="BK Student Smart Parking Service" />
           </button>
         )}
         {!showLogout && (
           <button className={styles.home_btn} onClick={handleLogout}>
-            <img className={styles.img} src={spss} alt="BK Student Smart Printing Service" />
+            <img className={styles.img} src={logo} alt="BK Student Smart Printing Service" />
           </button>
         )}
       </div>
